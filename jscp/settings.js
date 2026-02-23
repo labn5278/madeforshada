@@ -1140,17 +1140,35 @@ document.addEventListener('DOMContentLoaded', function () {
         if (googleAuthContainer) googleAuthContainer.style.display = 'none';
         loadWebsiteFromServer();
     } else {
+        // --- TAMBAHKAN KODE LOADING DI SINI ---
+        
+        // 1. Munculkan UI Loading
+        createLoadingUI();
+
+        // 2. Siapkan pengaturan di background
         initializeDefaultSettings();
         applyLoadedSettings();
+        
         if (window.initializePricingCalculator) {
             window.initializePricingCalculator();
         }
         if (window.pricingCalculator) {
             window.pricingCalculator.updatePricing();
         }
+        
         window.isWebsiteReady = true;
-        // KHÔNG gọi startWebsite ở đây, sẽ gọi trong loadWebsiteFromServer hoặc sau khi applyLoadedSettings
-    }
+
+        // 3. Buat jeda waktu (misal 1.5 detik / 1500ms) agar loading terlihat
+        setTimeout(() => {
+            removeLoadingUI(); // Hilangkan layar loading
+            
+            // Baru jalankan website-nya
+            if (typeof tryStartWebsiteWhenLandscape === 'function') {
+                tryStartWebsiteWhenLandscape();
+            } else if (typeof startWebsite === 'function') {
+                startWebsite();
+            }
+        }, 1500);
 });
 // Tạo UI loading
 function createLoadingUI() {
